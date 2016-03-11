@@ -1,0 +1,52 @@
+{
+  "name": "fuckwebpack",
+  "version": "1.0.0",
+  "description": "As the title",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "webpack",
+    "react",
+    "jquery",
+    "bootstrap"
+  ],
+  "author": "Lumpy Chen",
+  "license": "MIT",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git+ssh://git@github.com/LumpyChen/FuckWebpack.git"
+    }
+  ],
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.6.5",
+    "babel-core": "^6.7.2",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "css-loader": "^0.23.1",
+    "expose-loader": "^0.7.1",
+    "file-loader": "^0.8.5",
+    "jquery": "^2.2.1",
+    "less": "^2.6.1",
+    "less-loader": "^2.2.2",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-hot-loader": "^1.3.0",
+    "style-loader": "^0.13.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/LumpyChen/FuckWebpack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LumpyChen/FuckWebpack/issues"
+  },
+  "homepage": "https://github.com/LumpyChen/FuckWebpack#readme",
+  "dependencies": {}
+}
