@@ -1,0 +1,9 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "semi": [2, "never"],
+    "no-console": 0,
+    "no-mixed-spaces-and-tabs": 1,
+    "prop-types": [0, { ignore:"children" }],
+  }
+}
