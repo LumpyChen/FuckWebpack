@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-class App extends Component{
+class App extends Component {
+  foo() {
+    console.log(1)
+  }
   render() {
     return (
-      <MuiThemeProvider>
-        <div>
-          {this.props.children}
-        </div>
-      </MuiThemeProvider>
+      <div>
+        {this.props.children}
+      </div>
     )
   }
 }
