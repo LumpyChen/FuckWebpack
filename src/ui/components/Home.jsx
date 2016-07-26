@@ -1,12 +1,7 @@
 import React, { Component } from 'react'
-import AppBar from 'material-ui/AppBar'
-import IconButton from 'material-ui/IconButton'
-import ActionBuild from 'material-ui/svg-icons/action/build'
-import Close from 'material-ui/svg-icons/navigation/close'
-import FlatButton from 'material-ui/FlatButton'
 import Chip from 'material-ui/Chip'
-import Dialog from 'material-ui/Dialog'
-import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
+import Snackbar from 'material-ui/Snackbar'
+import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 
 import AddNRevert from './AddNRevert.jsx'
 
@@ -27,12 +22,15 @@ class Home extends Component {
         { key: 7, label: 'React-Router-Redux', intro: '8' },
         { key: 8, label: 'Redux-Saga', intro: '9' },
       ],
+      open: false,
+      delPackage: null,
     }
     this.handleClose = () => {
       this.setState({
         dialog: false,
         intro: '',
       })
+      this.context.router.push('/comment')
     }
     this.handleUpdate = (label, intro) => {
       const chipData = this.state.chipData
@@ -50,12 +48,23 @@ class Home extends Component {
     this.chipData = this.state.chipData
     const chipToDelete = this.chipData.map((chip) => chip.key).indexOf(key)
     this.chipData.splice(chipToDelete, 1)
-    this.setState({ chipData: this.chipData })
+    this.setState({
+      chipData: this.chipData,
+      open: true,
+    })
+  }
+  handleRequestClose() {
+    this.setState({
+      open: false,
+    })
   }
   handleTap(key) {
-    const chipToDisplay = this.state.chipData.map((chip) => chip.key).indexOf(key)
+    // const chipToDisplay = this.state.chipData.map((chip) => chip.key).indexOf(key)
+    const display = this.state.chipData[key].label.split('/').reduce((p, c) => (`${p}\\${c}`))
+    console.log(display)
+    this.context.router.push(`/package/${display}`)
     this.setState({
-      intro: this.state.chipData[chipToDisplay].intro,
+      intro: this.state.chipData[key].intro,
       dialog: true,
     })
   }
@@ -65,29 +74,28 @@ class Home extends Component {
         key={data.key}
         onRequestDelete={() => this.handleDel(data.key)}
         onTouchTap={() => this.handleTap(data.key)}
+        ref={data.key}
       >
         {data.label}
       </Chip>
     )
   }
   render() {
-    const expand = true
-    return (<div>
-      <Card>
-        <AppBar
-          title="这是Lumpy的脚手架，一个简单的模板"
-          iconElementLeft={<IconButton><ActionBuild /></IconButton>}
-          iconElementRight={<FlatButton label="其他" />}
-          zDepth={0}
-        />
+    let children
+    if (this.props.children) {
+      children =
+          React.cloneElement(this.props.children, {
+            intro: this.state.intro,
+            dialog: this.state.dialog,
+            close: () => this.handleClose(),
+          })
+    }
+    return (
+      <div>
         <CardHeader
           title="查看本应用采用了那些包："
-          actAsExpander
-          showExpandableButton={expand}
         />
-        <CardText
-          expandable={expand}
-        >
+        <CardText>
           {this.state.chipData.map(this.renderChip, this)}
         </CardText>
         <CardActions>
@@ -96,23 +104,24 @@ class Home extends Component {
             updateHome={(label, intro) => this.handleUpdate(label, intro)}
           />
         </CardActions>
-      </Card>
-      <Dialog
-        title={this.state.intro}
-        model={false}
-        open={this.state.dialog}
-        actions={
-          <FlatButton
-            label="关闭"
-            onTouchTap={this.handleClose}
-            icon={<Close />}
-            primary
-          />
-        }
-      />
-    </div>
+        {children}
+        <Snackbar
+          message="包已经被从项目中删除"
+          autoHideDuration={3000}
+          onRequestClose={() => this.handleRequestClose()}
+          open={this.state.open}
+        />
+      </div>
     )
   }
+}
+
+Home.contextTypes = {
+  router: React.PropTypes.object.isRequired,
+}
+
+Home.propTypes = {
+  children: React.PropTypes.node,
 }
 
 export default Home

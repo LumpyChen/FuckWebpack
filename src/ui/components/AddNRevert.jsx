@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import FlatButton from 'material-ui/FlatButton'
 import Dialog from 'material-ui/Dialog'
+import Snackbar from 'material-ui/Snackbar'
 import TextField from 'material-ui/TextField'
 import AVAdd from 'material-ui/svg-icons/av/playlist-add'
 import AVRevert from 'material-ui/svg-icons/av/replay'
@@ -11,23 +12,29 @@ export default class AddNRevert extends Component {
     super()
     this.state = {
       dialog: 0,
+      verify: 'empty',
       label: '',
       intro: '',
-      verify: false,
+      open: false,
     }
-    this.handleAdd = () => {
-      this.props.updateHome(this.state.label, this.state.intro)
-      this.setState({
-        dialog: 0,
-        verify: false,
-      })
-    }
-    this.handleClose = () => {
-      this.setState({
-        dialog: 0,
-        verify: false,
-      })
-    }
+  }
+  handleAdd() {
+    this.props.updateHome(this.state.label, this.state.intro)
+    this.setState({
+      dialog: 0,
+      verify: 'empty',
+      label: '',
+      intro: '',
+      open: true,
+    })
+  }
+  handleClose() {
+    this.setState({
+      dialog: 0,
+      verify: 'empty',
+      label: '',
+      intro: '',
+    })
   }
   handleTap(key) {
     this.setState({
@@ -39,13 +46,14 @@ export default class AddNRevert extends Component {
       label: e.target.value,
     })
     let same = false
-    this.props.chipData.forEach((chip) => {
-      if (chip.label === e.target.value) {
-        same = true
-      }
+    this.props.chipData.forEach((ele) => {
+      same = ele.label === e.target.value ? true : same
     })
-    console.log(same)
-    if (this.state.label === '' || same) {
+    if (e.target.value === '') {
+      this.setState({
+        verify: 'empty',
+      })
+    } else if (same) {
       this.setState({
         verify: false,
       })
@@ -55,24 +63,39 @@ export default class AddNRevert extends Component {
       })
     }
   }
+  handleRequestClose() {
+    this.setState({
+      open: false,
+    })
+  }
   handleChange2(e) {
     this.setState({
       intro: e.target.value,
     })
   }
   render() {
+    let errorText
+    switch (this.state.verify) {
+      case 'empty':
+        errorText = '包名称不能为空'
+        break
+      case false:
+        errorText = '该包已存在于项目中'
+        break
+      default:
+    }
     const actions1 = [
       <FlatButton
         label="添加"
         icon={<AVAdd />}
-        onTouchTap={this.handleAdd}
-        disabled={!this.state.verify}
+        onTouchTap={() => this.handleAdd()}
+        disabled={!!errorText}
         primary
       />,
       <FlatButton
         label="取消"
         icon={<AVCancel />}
-        onTouchTap={this.handleClose}
+        onTouchTap={() => this.handleClose()}
         primary
       />,
     ]
@@ -80,13 +103,13 @@ export default class AddNRevert extends Component {
       <FlatButton
         label="确认"
         icon={<AVRevert />}
-        onTouchTap={this.handleClose}
+        onTouchTap={() => this.handleClose()}
         primary
       />,
       <FlatButton
         label="取消"
         icon={<AVCancel />}
-        onTouchTap={this.handleClose}
+        onTouchTap={() => this.handleClose()}
         primary
       />,
     ]
@@ -113,7 +136,8 @@ export default class AddNRevert extends Component {
             <TextField
               hintText="注意不要和前面的包名称重复"
               floatingLabelText="包名称"
-              errorText={this.state.verify ? null : '包名称错误'}
+              value={this.state.label}
+              errorText={errorText}
               onChange={(e) => this.handleChange1(e)}
             />
           </div>
@@ -121,6 +145,7 @@ export default class AddNRevert extends Component {
             <TextField
               hintText="请输入您对包的介绍"
               floatingLabelText="包介绍"
+              value={this.state.intro}
               onChange={(e) => this.handleChange2(e)}
               multiLine
             />
@@ -131,6 +156,12 @@ export default class AddNRevert extends Component {
           open={this.state.dialog === 2}
           actions={actions2}
         />
+        <Snackbar
+          message="包已被添加到项目中"
+          autoHideDuration={2000}
+          onRequestClose={() => this.handleRequestClose()}
+          open={this.state.open}
+        />
       </div>
     )
   }
@@ -139,4 +170,6 @@ export default class AddNRevert extends Component {
 AddNRevert.propTypes = {
   updateHome: React.PropTypes.func,
   chipData: React.PropTypes.array,
+  label: React.PropTypes.string,
+  intro: React.PropTypes.string,
 }
