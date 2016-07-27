@@ -1,15 +1,16 @@
 import React, { Component } from 'react'
 import Chip from 'material-ui/Chip'
 import Snackbar from 'material-ui/Snackbar'
+import FlatButton from 'material-ui/FlatButton'
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
-
-import AddNRevert from './AddNRevert.jsx'
+import AVAdd from 'material-ui/svg-icons/av/playlist-add'
+import AVRevert from 'material-ui/svg-icons/av/replay'
 
 class Home extends Component {
   constructor() {
     super()
     this.state = {
-      dialog: false,
+      dialog: '',
       intro: '',
       chipData: [
         { key: 0, label: 'ImmutableJS', intro: '1' },
@@ -22,50 +23,106 @@ class Home extends Component {
         { key: 7, label: 'React-Router-Redux', intro: '8' },
         { key: 8, label: 'Redux-Saga', intro: '9' },
       ],
-      open: false,
+      openAdd: false,
+      openDel: false,
+      openRevert: false,
       delPackage: null,
     }
-    this.handleClose = () => {
-      this.setState({
-        dialog: false,
-        intro: '',
-      })
-      this.context.router.push('/comment')
-    }
-    this.handleUpdate = (label, intro) => {
-      const chipData = this.state.chipData
-      chipData.push({
-        key: chipData[chipData.length - 1].key + 1,
-        label,
-        intro,
-      })
-      this.setState({
-        chipData,
-      })
+  }
+  componentWillMount() {
+    if (this.getSelectedIndex()) {
+      if (this.getSelectedIndex() === 'new') {
+        this.setState({ dialog: 'new' })
+      } else if (this.getSelectedIndex() === 'revert') {
+        this.setState({ dialog: 'revert' })
+      } else if (typeof this.getSelectedIndex() === 'number') {
+        this.setState({
+          dialog: 'chip',
+          intro: this.state.chipData[this.getSelectedIndex()].intro,
+        })
+      }
     }
   }
-  handleDel(key) {
-    this.chipData = this.state.chipData
-    const chipToDelete = this.chipData.map((chip) => chip.key).indexOf(key)
-    this.chipData.splice(chipToDelete, 1)
+  componentWillReceiveProps() {
+    if (this.getSelectedIndex()) {
+      if (this.getSelectedIndex() === 'new') {
+        this.setState({ dialog: 'new' })
+      } else if (this.getSelectedIndex() === 'revert') {
+        this.setState({ dialog: 'revert' })
+      } else if (typeof this.getSelectedIndex() === 'number') {
+        this.setState({
+          dialog: 'chip',
+          intro: this.state.chipData[this.getSelectedIndex()].intro,
+        })
+      }
+    }
+  }
+  getSelectedIndex() {
+    let out
+    this.state.chipData.forEach((ele, i) => {
+      if (this.context.router.isActive(`/packages/${ele.label}`, true)) {
+        out = i
+      }
+    })
+    if (this.context.router.isActive('revert')) {
+      out = 'revert'
+    } else if (this.context.router.isActive('new')) {
+      out = 'new'
+    }
+    return out
+  }
+  handleClose() {
     this.setState({
-      chipData: this.chipData,
-      open: true,
+      dialog: '',
+      intro: '',
+    })
+    this.context.router.push('/')
+  }
+  handleUpdate(label, intro) {
+    const chipData = this.state.chipData
+    chipData.push({
+      key: chipData[chipData.length - 1].key + 1,
+      label,
+      intro: intro || '不存在对该包的描述。',
+    })
+    this.setState({
+      chipData,
+      dialog: '',
+      openAdd: true,
+    })
+    this.context.router.push('/')
+  }
+  handleDel(key) {
+    const newChipData = this.state.chipData
+    newChipData.splice(key, 1)
+    newChipData.map((chip, i) => {
+      chip.key = i
+      return chip
+    })
+    this.setState({
+      chipData: newChipData,
+      openDel: true,
     })
   }
   handleRequestClose() {
     this.setState({
-      open: false,
+      openAdd: false,
+      openDel: false,
+      openRevert: false,
     })
   }
   handleTap(key) {
-    // const chipToDisplay = this.state.chipData.map((chip) => chip.key).indexOf(key)
     const display = this.state.chipData[key].label.split('/').reduce((p, c) => (`${p}\\${c}`))
-    console.log(display)
-    this.context.router.push(`/package/${display}`)
+    this.context.router.push(`/packages/${display}`)
     this.setState({
-      intro: this.state.chipData[key].intro,
-      dialog: true,
+      intro: this.state.chipData.filter((item) => (item.key === key))[0].intro,
+      dialog: 'chip',
+    })
+  }
+  handleOpen(str) {
+    this.context.router.push(str)
+    this.setState({
+      dialog: str,
     })
   }
   renderChip(data) {
@@ -74,7 +131,6 @@ class Home extends Component {
         key={data.key}
         onRequestDelete={() => this.handleDel(data.key)}
         onTouchTap={() => this.handleTap(data.key)}
-        ref={data.key}
       >
         {data.label}
       </Chip>
@@ -87,7 +143,9 @@ class Home extends Component {
           React.cloneElement(this.props.children, {
             intro: this.state.intro,
             dialog: this.state.dialog,
-            close: () => this.handleClose(),
+            handleClose: () => this.handleClose(),
+            chipData: this.state.chipData,
+            updateHome: (label, intro) => this.handleUpdate(label, intro),
           })
     }
     return (
@@ -99,17 +157,31 @@ class Home extends Component {
           {this.state.chipData.map(this.renderChip, this)}
         </CardText>
         <CardActions>
-          <AddNRevert
-            chipData={this.state.chipData}
-            updateHome={(label, intro) => this.handleUpdate(label, intro)}
+          <FlatButton
+            label="添加包"
+            icon={<AVAdd />}
+            onTouchTap={() => this.handleOpen('new')}
+            primary
+          />
+          <FlatButton
+            label="撤销修改"
+            icon={<AVRevert />}
+            onTouchTap={() => this.handleOpen('revert')}
+            primary
           />
         </CardActions>
         {children}
         <Snackbar
           message="包已经被从项目中删除"
-          autoHideDuration={3000}
+          autoHideDuration={2000}
           onRequestClose={() => this.handleRequestClose()}
-          open={this.state.open}
+          open={this.state.openDel}
+        />
+        <Snackbar
+          message="包已被添加到项目中"
+          autoHideDuration={2000}
+          onRequestClose={() => this.handleRequestClose()}
+          open={this.state.openAdd}
         />
       </div>
     )

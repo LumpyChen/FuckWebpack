@@ -6,6 +6,12 @@
 </head>
 <body>
     <div id="root"></div>
-    <script src="./static/bundle.js"></script>
 </body>
+<script>
+  var script = document.createElement('script')
+  script.src = 'http://' + window.location.host + '/static/bundle.js'
+  var head = document.getElementsByTagName('body')[0]
+  script.type = 'text/javascript'
+  head.appendChild(script)
+</script>
 </html>

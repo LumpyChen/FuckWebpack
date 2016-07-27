@@ -5,6 +5,11 @@ import Dialog from 'material-ui/Dialog'
 
 
 export default class PackageIntro extends Component {
+  // prevent from error of eslint airbib
+  // must be written in class
+  getLabel() {
+    return '关闭'
+  }
   render() {
     return (
       <Dialog
@@ -13,8 +18,8 @@ export default class PackageIntro extends Component {
         open={this.props.dialog}
         actions={
           <FlatButton
-            label="关闭"
-            onTouchTap={() => this.props.close()}
+            label={this.getLabel()}
+            onTouchTap={() => this.props.handleClose()}
             icon={<Close />}
             primary
           />
@@ -26,6 +31,6 @@ export default class PackageIntro extends Component {
 
 PackageIntro.propTypes = {
   intro: React.PropTypes.string,
-  dialog: React.PropTypes.bool,
-  close: React.PropTypes.func,
+  dialog: React.PropTypes.string,
+  handleClose: React.PropTypes.func,
 }

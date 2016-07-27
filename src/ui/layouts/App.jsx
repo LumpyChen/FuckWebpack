@@ -11,7 +11,7 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
-      tabIndex: '/',
+      tabIndex: '/packages',
     }
   }
   getChildContext() {
@@ -30,10 +30,12 @@ class App extends Component {
     })
   }
   getSelectedIndex() {
-    return this.context.router.isActive('/', true) ? '/' : 'comment'
+    return this.context.router.isActive('packages', true) ? 'packages' : 'comment'
   }
   handleTap() {
-    this.context.router.push(this.context.router.isActive('/', true) ? 'comment' : '/')
+    this.context.router.push(
+      this.context.router.isActive('packages', true) ? '/comment' : '/packages'
+    )
     this.setState({
       tabIndex: this.getSelectedIndex(),
     })
