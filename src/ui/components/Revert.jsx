@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router'
 import FlatButton from 'material-ui/FlatButton'
 import Dialog from 'material-ui/Dialog'
 import AVRevert from 'material-ui/svg-icons/av/replay'
@@ -11,25 +12,29 @@ export default class Revert extends Component {
     })
   }
   render() {
-    const actions2 = [
-      <FlatButton
-        label="确认"
-        icon={<AVRevert />}
-        onTouchTap={() => this.props.handleClose()}
-        primary
-      />,
-      <FlatButton
-        label="取消"
-        icon={<AVCancel />}
-        onTouchTap={() => this.props.handleClose()}
-        primary
-      />,
+    const actions = [
+      <Link to="/packages">
+        <FlatButton
+          label="确认"
+          icon={<AVRevert />}
+          onTouchTap={() => this.props.handleClose()}
+          primary
+        />
+      </Link>,
+      <Link to="/packages">
+        <FlatButton
+          label="取消"
+          icon={<AVCancel />}
+          onTouchTap={() => this.props.handleClose()}
+          primary
+        />
+      </Link>,
     ]
     return (
       <Dialog
         title="是否取消之前最近一次操作？"
         open={this.props.dialog === 'revert'}
-        actions={actions2}
+        actions={actions}
       />
     )
   }

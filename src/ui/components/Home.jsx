@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router'
+
 import Chip from 'material-ui/Chip'
 import Snackbar from 'material-ui/Snackbar'
 import FlatButton from 'material-ui/FlatButton'
@@ -76,7 +78,6 @@ class Home extends Component {
       dialog: '',
       intro: '',
     })
-    this.context.router.push('/')
   }
   handleUpdate(label, intro) {
     const chipData = this.state.chipData
@@ -120,7 +121,6 @@ class Home extends Component {
     })
   }
   handleOpen(str) {
-    this.context.router.push(str)
     this.setState({
       dialog: str,
     })
@@ -157,18 +157,22 @@ class Home extends Component {
           {this.state.chipData.map(this.renderChip, this)}
         </CardText>
         <CardActions>
-          <FlatButton
-            label="添加包"
-            icon={<AVAdd />}
-            onTouchTap={() => this.handleOpen('new')}
-            primary
-          />
-          <FlatButton
-            label="撤销修改"
-            icon={<AVRevert />}
-            onTouchTap={() => this.handleOpen('revert')}
-            primary
-          />
+          <Link to="/new">
+            <FlatButton
+              label="添加包"
+              icon={<AVAdd />}
+              onTouchTap={() => this.handleOpen('new')}
+              primary
+            />
+          </Link>
+          <Link to="/revert">
+            <FlatButton
+              label="撤销修改"
+              icon={<AVRevert />}
+              onTouchTap={() => this.handleOpen('revert')}
+              primary
+            />
+          </Link>
         </CardActions>
         {children}
         <Snackbar

@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router'
+
 import FlatButton from 'material-ui/FlatButton'
 import Dialog from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField'
@@ -76,12 +78,14 @@ export default class Add extends Component {
         disabled={!!errorText}
         primary
       />,
-      <FlatButton
-        label="取消"
-        icon={<AVCancel />}
-        onTouchTap={() => this.handleClose()}
-        primary
-      />,
+      <Link to="/packages">
+        <FlatButton
+          label="取消"
+          icon={<AVCancel />}
+          onTouchTap={() => this.handleClose()}
+          primary
+        />
+      </Link>,
     ]
     return (
       <Dialog

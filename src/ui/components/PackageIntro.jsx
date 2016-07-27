@@ -15,7 +15,7 @@ export default class PackageIntro extends Component {
       <Dialog
         title={this.props.intro}
         model={false}
-        open={this.props.dialog}
+        open={!!this.props.dialog}
         actions={
           <FlatButton
             label={this.getLabel()}

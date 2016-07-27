@@ -8,10 +8,6 @@ export const delPackage = (id) => ({
   id,
 })
 
-export const cancelMovement = () => ({
-  type: 'CANCEL_MOVEMENT',
-})
-
-export const toggleView = () => ({
-  type: 'TOGGLE_VIEW',
+export const revertMovement = () => ({
+  type: 'REVERT_MOVEMENT',
 })
