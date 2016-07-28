@@ -24,6 +24,7 @@ class Home extends Component {
         { key: 6, label: 'React-Redux/Redux', intro: '7' },
         { key: 7, label: 'React-Router-Redux', intro: '8' },
         { key: 8, label: 'Redux-Saga', intro: '9' },
+        { key: 9, label: 'redux-undo', intro: '9' },
       ],
       openAdd: false,
       openDel: false,
