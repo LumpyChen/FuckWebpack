@@ -10,6 +10,7 @@ import { Comment, StepOne, StepTwo, StepThree } from '../components/Comment.jsx'
 import PackageIntro from '../components/PackageIntro.jsx'
 import Add from '../components/Add.jsx'
 import Revert from '../components/Revert.jsx'
+import Page404 from '../components/404.jsx'
 
 const store = createStore(
   combineReducers({
@@ -30,13 +31,14 @@ export const renderRoutes = () => (
           <Route path="/revert" component={Revert} />
           <Route path=":label" component={PackageIntro} />
         </Route>
-        <Route path="comment" component={Comment}>
+        <Route path="/comment" component={Comment}>
           <IndexRedirect to="one" />
           <Route
             path="(one)(two)(three)"
             components={{ one: StepOne, two: StepTwo, three: StepThree }}
           />
         </Route>
+        <Route path="*" component={Page404} />
       </Route>
     </Router>
   </Provider>
