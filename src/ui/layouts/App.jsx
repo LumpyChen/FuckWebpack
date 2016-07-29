@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
+
 import Card from 'material-ui/Card'
 import AppBar from 'material-ui/AppBar'
 import IconButton from 'material-ui/IconButton'
@@ -7,38 +10,23 @@ import ActionBuild from 'material-ui/svg-icons/action/build'
 import Toggle from 'material-ui/svg-icons/av/loop'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
+const mapStateToProps = (obj, { location }) => ({
+  path: location.pathname,
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  push: url => dispatch(push(url)),
+})
+
+
 class App extends Component {
-  constructor() {
-    super()
-    this.state = {
-      tabIndex: '/packages',
-    }
-  }
   getChildContext() {
     return {
       muiTheme: getMuiTheme(),
     }
   }
-  componentWillMount() {
-    this.setState({
-      tabIndex: this.getSelectedIndex(),
-    })
-  }
-  componentWillReceiveProps() {
-    this.setState({
-      tabIndex: this.getSelectedIndex(),
-    })
-  }
-  getSelectedIndex() {
-    return this.context.router.isActive('packages', true) ? 'packages' : 'comment'
-  }
   handleTap() {
-    this.context.router.push(
-      this.context.router.isActive('packages', true) ? '/comment' : '/packages'
-    )
-    this.setState({
-      tabIndex: this.getSelectedIndex(),
-    })
+    this.props.push(this.props.path === '/packages' ? '/comment' : '/packages')
   }
   render() {
     return (
@@ -64,14 +52,12 @@ class App extends Component {
 
 App.propTypes = {
   children: React.PropTypes.node,
-}
-
-App.contextTypes = {
-  router: React.PropTypes.object.isRequired,
+  path: React.PropTypes.string,
+  push: React.PropTypes.func,
 }
 
 App.childContextTypes = {
   muiTheme: React.PropTypes.object.isRequired,
 }
 
-export default App
+export default connect(mapStateToProps, mapDispatchToProps)(App)

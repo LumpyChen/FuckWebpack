@@ -1,36 +1,53 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
+import { Link } from 'react-router'
+
 import Close from 'material-ui/svg-icons/navigation/close'
 import FlatButton from 'material-ui/FlatButton'
 import Dialog from 'material-ui/Dialog'
 
+const mapStateToProps = ({ chipData }, { params }) => ({
+  path: params,
+  chipData,
+})
 
-export default class PackageIntro extends Component {
-  // prevent from error of eslint airbib
-  // must be written in class
-  getLabel() {
-    return '关闭'
+const mapDispatchToProps = (dispatch) => ({
+  push: url => dispatch(push(url)),
+})
+
+class PackageIntro extends Component {
+  getIntro() {
+    const chip = this.props.chipData.filter((ele) =>
+    (
+      ele.label === this.props.path.label
+    ))[0]
+    return chip.intro || '没有对此包进行相关描述。'
   }
   render() {
     return (
       <Dialog
-        title={this.props.intro}
-        model={false}
-        open={!!this.props.dialog}
+        title={this.getIntro()}
+        model
+        open
         actions={
-          <FlatButton
-            label={this.getLabel()}
-            onTouchTap={() => this.props.handleClose()}
-            icon={<Close />}
-            primary
-          />
+          <Link to="/packages">
+            <FlatButton
+              label="关闭"
+              icon={<Close />}
+              primary
+            />
+          </Link>
         }
       />
     )
   }
 }
 
+export default connect(mapStateToProps, mapDispatchToProps)(PackageIntro)
+
 PackageIntro.propTypes = {
-  intro: React.PropTypes.string,
-  dialog: React.PropTypes.string,
-  handleClose: React.PropTypes.func,
+  path: React.PropTypes.object,
+  push: React.PropTypes.func,
+  chipData: React.PropTypes.array,
 }

@@ -1,5 +1,12 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
+import { connect } from 'react-redux'
+
+import { push } from 'react-router-redux'
+import { addPackage } from '../actions/ChipData'
+import { changeIntro, changeLabel, verifyLabel, setEmpty } from '../actions/NewPackage'
+import { toggleSnackAdd } from '../actions/Snack'
+
 
 import FlatButton from 'material-ui/FlatButton'
 import Dialog from 'material-ui/Dialog'
@@ -7,65 +14,51 @@ import TextField from 'material-ui/TextField'
 import AVAdd from 'material-ui/svg-icons/av/playlist-add'
 import AVCancel from 'material-ui/svg-icons/av/not-interested'
 
-export default class Add extends Component {
-  constructor() {
-    super()
-    this.state = {
-      verify: 'empty',
-      label: '',
-      intro: '',
-    }
+const mapStateToProps = ({ verify, label, intro, chipData }) => ({
+  verify,
+  label,
+  intro,
+  chipData,
+})
+
+const mapDispatchToProps = dispatch => ({
+  pushHome: () => dispatch(push('/')),
+  addPackage: data => dispatch(addPackage(data)),
+  changeLabel: label => dispatch(changeLabel(label)),
+  changeIntro: intro => dispatch(changeIntro(intro)),
+  verifyLabel: (label, chipData) => dispatch(verifyLabel(label, chipData)),
+  setEmpty: () => dispatch(setEmpty()),
+  toggleSnackAdd: () => dispatch(toggleSnackAdd()),
+})
+
+class Add extends Component {
+  componentWillUnmount() {
+    this.props.changeLabel('')
+    this.props.changeIntro('')
+    this.props.setEmpty()
+  }
+  handleChangeLabel(e) {
+    this.props.changeLabel(e.target.value)
+    this.props.verifyLabel(e.target.value, this.props.chipData)
+  }
+  handleChangeIntro(e) {
+    this.props.changeIntro(e.target.value)
   }
   handleAdd() {
-    this.props.updateHome(this.state.label, this.state.intro)
-    this.setState({
-      verify: 'empty',
-      label: '',
-      intro: '',
+    this.props.toggleSnackAdd()
+    this.props.addPackage({
+      label: this.props.label,
+      intro: this.props.intro,
     })
-  }
-  handleClose() {
-    this.props.handleClose()
-    this.setState({
-      verify: 'empty',
-      label: '',
-      intro: '',
-    })
-  }
-  handleChange1(e) {
-    this.setState({
-      label: e.target.value,
-    })
-    let same = false
-    this.props.chipData.forEach((ele) => {
-      same = ele.label === e.target.value ? true : same
-    })
-    if (e.target.value === '') {
-      this.setState({
-        verify: 'empty',
-      })
-    } else if (same) {
-      this.setState({
-        verify: false,
-      })
-    } else {
-      this.setState({
-        verify: true,
-      })
-    }
-  }
-  handleChange2(e) {
-    this.setState({
-      intro: e.target.value,
-    })
+    this.props.pushHome()
   }
   render() {
     let errorText
-    switch (this.state.verify) {
+    switch (this.props.verify) {
       case 'empty':
         errorText = '包名称不能为空'
         break
-      case false:
+      case 'same':
         errorText = '该包已存在于项目中'
         break
       default:
@@ -82,7 +75,6 @@ export default class Add extends Component {
         <FlatButton
           label="取消"
           icon={<AVCancel />}
-          onTouchTap={() => this.handleClose()}
           primary
         />
       </Link>,
@@ -90,24 +82,24 @@ export default class Add extends Component {
     return (
       <Dialog
         title="请输入新增包的相关信息："
-        open={this.props.dialog === 'new'}
         actions={actions1}
+        open
       >
         <div>
           <TextField
             hintText="注意不要和前面的包名称重复"
             floatingLabelText="包名称"
-            value={this.state.label}
+            value={this.props.label}
             errorText={errorText}
-            onChange={(e) => this.handleChange1(e)}
+            onChange={(e) => this.handleChangeLabel(e)}
           />
         </div>
         <div>
           <TextField
             hintText="请输入您对包的介绍"
             floatingLabelText="包介绍"
-            value={this.state.intro}
-            onChange={(e) => this.handleChange2(e)}
+            value={this.props.intro}
+            onChange={(e) => this.handleChangeIntro(e)}
             multiLine
           />
         </div>
@@ -117,8 +109,17 @@ export default class Add extends Component {
 }
 
 Add.propTypes = {
-  updateHome: React.PropTypes.func,
-  handleClose: React.PropTypes.func,
   chipData: React.PropTypes.array,
-  dialog: React.PropTypes.string,
+  label: React.PropTypes.string,
+  intro: React.PropTypes.string,
+  verify: React.PropTypes.string,
+  pushHome: React.PropTypes.func,
+  addPackage: React.PropTypes.func,
+  changeLabel: React.PropTypes.func,
+  changeIntro: React.PropTypes.func,
+  verifyLabel: React.PropTypes.func,
+  setEmpty: React.PropTypes.func,
+  toggleSnackAdd: React.PropTypes.func,
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Add)

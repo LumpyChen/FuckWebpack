@@ -1,27 +1,31 @@
 import React from 'react'
 import { Router, Route, browserHistory, IndexRedirect } from 'react-router'
-import { createStore, combineReducers } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux'
+import reducers from '../reducers/reducers'
 
 import App from '../layouts/App.jsx'
 import Home from '../components/Home.jsx'
-import { Comment, StepOne, StepTwo, StepThree } from '../components/Comment.jsx'
+import Comment from '../components/Comment.jsx'
+import { StepOne, StepTwo, StepThree } from '../components/StepText.jsx'
 import PackageIntro from '../components/PackageIntro.jsx'
 import Add from '../components/Add.jsx'
 import Revert from '../components/Revert.jsx'
 import Page404 from '../components/404.jsx'
 
+const middleware = routerMiddleware(browserHistory)
+
 const store = createStore(
-  combineReducers({
-    routing: routerReducer,
-  })
-)
+  reducers,
+  compose(
+    applyMiddleware(middleware),
+    window.devToolsExtension ? window.devToolsExtension() : f => f)
+  )
 
 const history = syncHistoryWithStore(browserHistory, store)
 
-
-export const renderRoutes = () => (
+export default () => (
   <Provider store={store} >
     <Router history={history}>
       <Route path="/" component={App}>
@@ -32,9 +36,9 @@ export const renderRoutes = () => (
           <Route path=":label" component={PackageIntro} />
         </Route>
         <Route path="/comment" component={Comment}>
-          <IndexRedirect to="one" />
+          <IndexRedirect to="1" />
           <Route
-            path="(one)(two)(three)"
+            path="(1)(2)(3)"
             components={{ one: StepOne, two: StepTwo, three: StepThree }}
           />
         </Route>

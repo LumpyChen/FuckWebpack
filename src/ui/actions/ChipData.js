@@ -3,9 +3,9 @@ export const addPackage = (data) => ({
   data,
 })
 
-export const delPackage = (id) => ({
+export const delPackage = (delkey) => ({
   type: 'DEL_PACKAGE',
-  id,
+  delkey,
 })
 
 export const revertMovement = () => ({
