@@ -9,7 +9,7 @@ import Dialog from 'material-ui/Dialog'
 
 const mapStateToProps = ({ chipData }, { params }) => ({
   path: params,
-  chipData,
+  chipData: chipData.present,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -18,9 +18,8 @@ const mapDispatchToProps = (dispatch) => ({
 
 class PackageIntro extends Component {
   getIntro() {
-    const chip = this.props.chipData.filter((ele) =>
-    (
-      ele.label === this.props.path.label
+    const chip = this.props.chipData.filter((ele) => (
+      ele.label.split('/').reduce((p, c) => (`${p}\\${c}`)) === this.props.path.label
     ))[0]
     return chip.intro || '没有对此包进行相关描述。'
   }

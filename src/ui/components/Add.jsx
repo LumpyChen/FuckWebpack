@@ -18,7 +18,7 @@ const mapStateToProps = ({ verify, label, intro, chipData }) => ({
   verify,
   label,
   intro,
-  chipData,
+  chipData: chipData.present,
 })
 
 const mapDispatchToProps = dispatch => ({

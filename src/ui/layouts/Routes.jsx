@@ -25,6 +25,19 @@ const store = createStore(
 
 const history = syncHistoryWithStore(browserHistory, store)
 
+const authTransition = (nextState, replace) => {
+  const state = store.getState()
+  const path = state.routing.locationBeforeTransitions.pathname.replace('\\', '/')
+  console.log(path)
+  let conf = false
+  state.chipData.present.forEach((ele) => (
+    conf = `/packages/${ele.label}` === path ? true : conf
+  ))
+  if (!conf) {
+    replace('/404')
+  }
+}
+
 export default () => (
   <Provider store={store} >
     <Router history={history}>
@@ -33,7 +46,7 @@ export default () => (
         <Route path="/packages" component={Home} >
           <Route path="/new" component={Add} />
           <Route path="/revert" component={Revert} />
-          <Route path=":label" component={PackageIntro} />
+          <Route path=":label" component={PackageIntro} onEnter={authTransition} />
         </Route>
         <Route path="/comment" component={Comment}>
           <IndexRedirect to="1" />

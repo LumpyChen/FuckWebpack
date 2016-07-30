@@ -1,4 +1,6 @@
-export default (state = [
+import undoable, { includeAction } from 'redux-undo'
+
+const chipData = (state = [
   { key: 0, label: 'immutablejs', intro: '1' },
   { key: 1, label: 'material-ui', intro: '2' },
   { key: 2, label: 'radium', intro: '3' },
@@ -27,3 +29,7 @@ export default (state = [
       return state
   }
 }
+
+export default undoable(chipData, {
+  filter: includeAction(['ADD_PACKAGE', 'DEL_PACKAGE']),
+})
