@@ -9,3 +9,7 @@ export const toggleSnackRm = () => ({
 export const toggleSnackRv = () => ({
   type: 'TOGGLE_SNACK_RV',
 })
+
+export const toggleSnackRs = () => ({
+  type: 'TOGGLE_SNACK_RS',
+})

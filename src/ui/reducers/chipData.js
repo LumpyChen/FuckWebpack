@@ -25,11 +25,15 @@ const chipData = (state = [
         ele.key !== action.delkey
       ))
     }
+    case 'CHIPDATA_RECEIVED': {
+      console.log(action.chipData)
+      return action.chipData.slice()
+    }
     default:
       return state
   }
 }
 
 export default undoable(chipData, {
-  filter: includeAction(['ADD_PACKAGE', 'DEL_PACKAGE']),
+  filter: includeAction(['ADD_PACKAGE', 'DEL_PACKAGE', 'CHIPDATA_RECEIVED']),
 })

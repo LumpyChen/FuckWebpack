@@ -4,7 +4,8 @@
   "description": "As the title",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon src/server/dev-server.js --ignore src/ui/",
+    "start": "node src/server/server.js",
+    "build": "webpack --config ./src/config/webpack.prod.config.js",
     "lint": "eslint src"
   },
   "keywords": [
@@ -23,8 +24,13 @@
   },
   "homepage": "https://github.com/LumpyChen/FuckWebpack#readme",
   "dependencies": {
+    "babel-polyfill": "^6.9.1",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "immutable": "^3.8.1",
+    "isomorphic-fetch": "^2.2.1",
     "material-ui": "^0.15.2",
+    "mocha": "^2.5.3",
     "radium": "^0.18.1",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import { push, replace } from 'react-router-redux'
 import { delPackage } from '../actions/ChipData.js'
-import { toggleSnackRm, toggleSnackRv, toggleSnackAdd } from '../actions/Snack'
+import { toggleSnackRm, toggleSnackRv, toggleSnackAdd, toggleSnackRs } from '../actions/Snack'
 import { ActionCreators as UndoActionCreators } from 'redux-undo'
 
 import Chip from 'material-ui/Chip'
@@ -13,6 +13,7 @@ import FlatButton from 'material-ui/FlatButton'
 import { CardActions, CardHeader, CardText } from 'material-ui/Card'
 import AVAdd from 'material-ui/svg-icons/av/playlist-add'
 import AVRevert from 'material-ui/svg-icons/av/replay'
+import AVReset from 'material-ui/svg-icons/av/loop'
 
 const mapStateToProps = ({ chipData, snack }, { location }) => ({
   chipData: chipData.present,
@@ -28,6 +29,7 @@ const mapDispatchToProps = dispatch => ({
   toggleSnackRm: () => dispatch(toggleSnackRm()),
   toggleSnackAdd: () => dispatch(toggleSnackAdd()),
   toggleSnackRv: () => dispatch(toggleSnackRv()),
+  toggleSnackRs: () => dispatch(toggleSnackRs()),
   onUndo: () => dispatch(UndoActionCreators.undo()),
   onRedo: () => dispatch(UndoActionCreators.redo()),
 })
@@ -41,7 +43,6 @@ class Home extends Component {
     const display = this.props.chipData.filter((ele) => (
       ele.key === key
     ))[0].label.split('/').reduce((p, c) => (`${p}\\${c}`))
-    console.log(`/packages/${display}`)
     this.props.push(`/packages/${display}`)
   }
   renderChip(data) {
@@ -79,6 +80,13 @@ class Home extends Component {
             icon={<AVRevert />}
             primary
           />
+          <FlatButton
+            label="重置包"
+            disabled={!this.props.canUndo}
+            onTouchTap={() => this.props.push('/reset')}
+            icon={<AVReset />}
+            primary
+          />
         </CardActions>
         {this.props.children}
         <Snackbar
@@ -105,6 +113,14 @@ class Home extends Component {
           onActionTouchTap={() => this.props.onRedo()}
           open={this.props.snack.snackRv}
         />
+        <Snackbar
+          message="已重置包数据"
+          autoHideDuration={2000}
+          action="恢复"
+          onRequestClose={() => this.props.toggleSnackRs()}
+          onActionTouchTap={() => this.props.onUndo()}
+          open={this.props.snack.snackRs}
+        />
       </div>
     )
   }
@@ -123,11 +139,13 @@ Home.propTypes = {
   replaceState: React.PropTypes.func,
   delPackage: React.PropTypes.func,
   toggleSnackRm: React.PropTypes.func,
+  toggleSnackRs: React.PropTypes.func,
   toggleSnackRv: React.PropTypes.func,
   toggleSnackAdd: React.PropTypes.func,
   push: React.PropTypes.func,
   onUndo: React.PropTypes.func,
   onRedo: React.PropTypes.func,
+  fetchChipData: React.PropTypes.func,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

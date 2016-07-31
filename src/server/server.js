@@ -1,35 +1,16 @@
-/**
- * Created by Lumpychen on 16/3/11.
- */
-const express = require('express'),
-      path = require('path')
+const path = require('path')
+const express = require('express')
+const bodyParser = require('body-parser')
 
-const webpack = require('webpack');
+let data = require('../../data/chipData.json')
 
-const PORT = process.env.port || 5000;
+const server = express()
+.use(express.static(`${__dirname}/../../`))
+.use(bodyParser.json())
+.get('/api/chipData', (req, res) => res.json(data))
+.post('/api/chipData', (req, res) => res.json(data = req.body))
+.get('*', (req, res) => res.sendFile(path.resolve('index.html')))
 
-var config = require('./webpack.config');
-
-var app = express();
-
-app.use(express.static(path.resolve('dist')));
-
-app.use('/static/bundle.js', function (req, res) {
-    res.redirect('/bundle.js');
-});
-
-app.use('/', function (req, res) {
-    res.sendFile(path.resolve('./index.html'));
-});
-
-app.listen(PORT, function(error) {
-    if(error) throw error;
-    webpack(config, (err, stats) => {
-        if (err) throw error;
-        console.log("It's product mode now");
-        console.log(`Listening at localhost:${PORT}`);
-        console.log(`bundle at ${config.output.path}${config.output.publicPath}`);
-    });
-});
-
-
+server.listen(3333, () => {
+  console.log('ok, listening on 3333.')
+})
