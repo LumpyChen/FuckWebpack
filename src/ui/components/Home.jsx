@@ -16,8 +16,8 @@ import AVRevert from 'material-ui/svg-icons/av/replay'
 import AVReset from 'material-ui/svg-icons/av/loop'
 
 const mapStateToProps = ({ chipData, snack }, { location }) => ({
-  chipData: chipData.present,
-  snack,
+  chipData: chipData.present.toJS(),
+  snack: snack.toJS(),
   path: location.pathname,
   canUndo: chipData.past.length > 0,
 })
@@ -40,6 +40,7 @@ class Home extends Component {
     this.props.toggleSnackRm()
   }
   handleTap(key) {
+    console.log(this.props.chipData)
     const display = this.props.chipData.filter((ele) => (
       ele.key === key
     ))[0].label.split('/').reduce((p, c) => (`${p}\\${c}`))

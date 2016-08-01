@@ -9,7 +9,7 @@ import Dialog from 'material-ui/Dialog'
 
 const mapStateToProps = ({ chipData }, { params }) => ({
   path: params,
-  chipData: chipData.present,
+  chipData: chipData.present.toJS(),
 })
 
 const mapDispatchToProps = (dispatch) => ({

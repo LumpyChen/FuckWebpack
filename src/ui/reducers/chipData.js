@@ -1,6 +1,7 @@
 import undoable, { includeAction } from 'redux-undo'
+import Immutable from 'immutable'
 
-const chipData = (state = [
+const initialState = Immutable.fromJS([
   { key: 0, label: 'immutablejs', intro: '1' },
   { key: 1, label: 'material-ui', intro: '2' },
   { key: 2, label: 'radium', intro: '3' },
@@ -11,23 +12,23 @@ const chipData = (state = [
   { key: 7, label: 'react-router-redux', intro: '8' },
   { key: 8, label: 'redux-saga', intro: '9' },
   { key: 9, label: 'redux-undo', intro: '9' },
-], action) => {
+])
+
+const chipData = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_PACKAGE': {
-      const newChip = Object.assign({}, action.data, {
-        key: state[state.length - 1].key + 1,
+      const newChip = Object.assign({ }, action.data, {
+        key: state.get(state.size - 1).get('key') + 1,
       })
-      return state.concat(newChip)
+      return state.push(Immutable.fromJS(newChip))
     }
     case 'DEL_PACKAGE': {
-      const chipDel = state.slice()
-      return chipDel.filter((ele) => (
-        ele.key !== action.delkey
+      return state.filter((ele) => (
+        ele.get('key') !== action.delkey
       ))
     }
     case 'CHIPDATA_RECEIVED': {
-      console.log(action.chipData)
-      return action.chipData.slice()
+      return Immutable.fromJS(action.chipData)
     }
     default:
       return state
